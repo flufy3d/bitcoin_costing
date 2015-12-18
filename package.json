@@ -1,0 +1,18 @@
+{
+  "name": "bitcoin_costing",
+  "version": "0.0.0",
+  "description": "bitcoin costing compute",
+  "main": "app.js",
+  "dependencies": {
+    "cheerio": "^0.17.0",
+    "express": "^4.9.5",
+    "jade": "^1.11.0",
+    "superagent": "^0.20.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "flufy3d <flufy3d@gmail.com>",
+  "license": "MIT"
+}

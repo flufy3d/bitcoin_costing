@@ -1,0 +1,46 @@
+html
+  head
+    title!= title
+    style
+      include style.css
+  body
+    h2 当前比特币价格 #{message.cur_price} rmb
+    h2 全网算力 #{message.cur_hashRate} PH/s
+    div
+      table
+        thead
+            tr
+                th 矿机名
+                th 价格
+                th 算力
+                th 每G成本
+                th 瓦数
+                th 电力成本
+                th 日收益btc
+                th 日收益rmb
+                th 回本天数
+                th 每币成本
+        tbody
+          each device in message.devices
+            tr
+              td 
+                span!=device.name
+              td 
+                span!=device.rmb
+              td 
+                span!=device.speed
+              td 
+                span!=device.perGhs
+              td 
+                span!=device.watt
+              td 
+                span!=device.perPGhs
+              td 
+                span!=device.perDay
+              td 
+                span!=device.perDayCNY
+              td 
+                span!=device.costRecovery
+              td
+                span!=device.perBtcCost
+    
