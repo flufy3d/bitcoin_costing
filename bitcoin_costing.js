@@ -15,6 +15,13 @@ if (!String.prototype.format) {
   };
 }
 
+
+var app = express();
+
+var global_param = {};
+global_param.p = 3;
+
+
 function getBtcCost(rmb,perPGhs,perDay)
 {
   var work_days = 400;
@@ -22,9 +29,10 @@ function getBtcCost(rmb,perPGhs,perDay)
   var perday_earned = perDay;
   var device_cost = rmb;
   var adjust_days = 12;
+  var real_p = 1.0 - global_param.p*0.01;
   for (var i = 0; i <  work_days ; ) {
       earned_btc += perday_earned*adjust_days;
-      perday_earned *= 0.97;
+      perday_earned *= real_p;
       i += adjust_days;
   };
   var perbtc_device_cost = rmb / earned_btc;
@@ -33,9 +41,20 @@ function getBtcCost(rmb,perPGhs,perDay)
   return totol_cost.toFixed(3);
 }
 
-var app = express();
+
 app.set('view engine', 'jade');
 
+app.get('/set', function (req, res, next) {
+  param = req.query.p;
+  if (!isNaN(param)) {
+    res.send(req.query.p);
+    global_param.p = Number(req.query.p);
+  }
+  else{
+    res.send('error parameter!');
+  };
+  
+});
 
 app.get('/', function (req, res, next) {
   superagent.get('http://mining.btcfans.com/reverse.php')
@@ -49,6 +68,7 @@ app.get('/', function (req, res, next) {
 
       result.cur_price = $('span[id=0lastPrice]').text();
       result.cur_hashRate = $('span[id=hashRate]').text();
+      result.cur_p = global_param.p;
       result.devices = [];
 
       search_content = $('table').toArray()[1];
