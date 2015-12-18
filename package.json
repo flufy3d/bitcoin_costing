@@ -2,7 +2,7 @@
   "name": "bitcoin_costing",
   "version": "0.0.0",
   "description": "bitcoin costing compute",
-  "main": "app.js",
+  "main": "bitcoin_costing.js",
   "dependencies": {
     "cheerio": "^0.17.0",
     "express": "^4.9.5",
