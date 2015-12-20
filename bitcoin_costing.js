@@ -55,6 +55,8 @@ function getBtcCost(rmb,perPGhs,perDay,price)
   var perday_earned = perDay;
   var device_cost = rmb;
   var device_cost_by_btc = rmb/price;
+  var dpcbb_per_day = perPGhs/price;
+  var dpcbb = 0;
   var adjust_days = 12;
 
   var recovery_day = 999;
@@ -63,8 +65,9 @@ function getBtcCost(rmb,perPGhs,perDay,price)
   var real_p = 1.0 - global_param.p*0.01;
   for (var i = 0; i <  work_days ; ) {
       earned_btc += perday_earned*adjust_days;
+      dpcbb += dpcbb_per_day*adjust_days;
       perday_earned *= real_p;
-      if (earned_btc >= device_cost_by_btc && !already_recovery) { 
+      if (earned_btc >= (device_cost_by_btc + dpcbb) && !already_recovery) { 
         recovery_day = i;
         already_recovery = true;
       };
