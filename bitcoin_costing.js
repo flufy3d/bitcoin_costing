@@ -46,6 +46,29 @@ var l_device = {
 };
 local_device_lists.push(l_device);
 
+var l_device = {
+  name : '阿瓦隆A6矿机',
+  rmb : 8800,
+  speed : 3500,
+  watt : 1050,
+};
+local_device_lists.push(l_device);
+
+var l_device = {
+  name : '烤猫棱镜1.4T矿机',
+  rmb : 1750,
+  speed : 1400,
+  watt : 1200,
+};
+local_device_lists.push(l_device);
+
+var l_device = {
+  name : '蚂蚁S5矿机',
+  rmb : 2600,
+  speed : 1150,
+  watt : 590,
+};
+local_device_lists.push(l_device);
 
 
 function getBtcCost(rmb,perPGhs,perDay,price)
@@ -113,6 +136,9 @@ app.get('/', function (req, res, next) {
       result.devices = [];
 
       search_content = $('table').toArray()[1];
+
+
+      /*
       var devcie_name = $('td a[rel=nofollow]',search_content).toArray();
       
       for (var i = 0; i < 4; i++) {
@@ -136,6 +162,7 @@ app.get('/', function (req, res, next) {
         result.devices.push(device);
 
       };
+      */
 
 
       
