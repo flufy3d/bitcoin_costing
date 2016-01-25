@@ -130,6 +130,7 @@ app.get('/', function (req, res, next) {
       result.cur_price = $('span[id=0lastPrice]').text();
       result.cur_price = result.cur_price.replace(',','');
       result.cur_hashRate = $('span[id=hashRate]').text();
+      result.cur_hashRate = result.cur_hashRate.replace(',','');
       result.cur_p = global_param.p;
       result.btcs24h = $('span[id=btcs24h]').text();
       result.btcs24h = result.btcs24h.replace(',','');
