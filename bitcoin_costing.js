@@ -24,7 +24,7 @@ global_param.p = 3;
 var local_device_lists = [];
 var l_device = {
   name : '蚂蚁S7矿机',
-  rmb : 10500,
+  rmb : 2900,
   speed : 4730,
   watt : 1293,
 };
@@ -48,7 +48,7 @@ local_device_lists.push(l_device);
 
 var l_device = {
   name : '阿瓦隆A6矿机',
-  rmb : 8800,
+  rmb : 2450,
   speed : 3500,
   watt : 1050,
 };
