@@ -203,18 +203,29 @@ app.get('/', function (req, res, next) {
 
           function ShowDatalist(data_list)
           {
-            var acc_num = 0
-            var acc_value = 0
+            var acc_num_usd = 0
+            var acc_value_usd = 0
             for (i in data_list)
             {
                 data = data_list[i]
                 if (data.code == 'USD' ) {
-                  acc_num += 1.0
-                  acc_value += parseFloat(data.sellPrice2)
+                  acc_num_usd += 1.0
+                  acc_value_usd += parseFloat(data.sellPrice2)
                 }
             }
-            result.usd2cny = (acc_value/acc_num/100).toFixed(4)
-            
+            result.usd2cny = (acc_value_usd/acc_num_usd/100).toFixed(4)
+
+            var acc_num_eur = 0
+            var acc_value_eur = 0
+            for (i in data_list)
+            {
+                data = data_list[i]
+                if (data.code == 'EUR' ) {
+                  acc_num_eur += 1.0
+                  acc_value_eur += parseFloat(data.sellPrice2)
+                }
+            }
+            result.eur2cny = (acc_value_eur/acc_num_eur/100).toFixed(4)            
 
 
             //get cny asks depth
