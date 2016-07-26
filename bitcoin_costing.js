@@ -15,7 +15,6 @@ if (!String.prototype.format) {
   };
 }
 
-
 var app = express();
 
 var global_param = {};
@@ -117,14 +116,19 @@ app.get('/set', function (req, res, next) {
   
 });
 
+var result = {};
+
+
 app.get('/', function (req, res, next) {
+
+  //compute mining cost
   superagent.get('http://mining.btcfans.com/reverse.php')
     .end(function (err, sres) {
       if (err) {
         return next(err);
       }
       var $ = cheerio.load(sres.text);
-      var result = {};
+      
 
 
       result.cur_price = $('span[id=0lastPrice]').text();
@@ -189,8 +193,125 @@ app.get('/', function (req, res, next) {
             
       };
 
-      //res.send(result);
-      res.render('index', { title: 'Bitcoin Costing', message: result });
+      //compute transfer cost
+      superagent.get('http://data.bank.hexun.com/other/cms/foreignexchangejson.ashx?callback=ShowDatalist')
+        .buffer(true)
+        .end(function (err, sres) {
+          if (err) {
+            return next(err);
+          }
+
+          function ShowDatalist(data_list)
+          {
+            var acc_num = 0
+            var acc_value = 0
+            for (i in data_list)
+            {
+                data = data_list[i]
+                if (data.code == 'USD' ) {
+                  acc_num += 1.0
+                  acc_value += parseFloat(data.sellPrice2)
+                }
+            }
+            result.usd2cny = (acc_value/acc_num/100).toFixed(4)
+            
+
+
+            //get cny asks depth
+            
+            superagent.get('https://www.okcoin.cn/api/v1/depth.do?symbol=btc_cny&merge=1')
+              .buffer(true)
+              .end(function (err, sres) {
+                if (err) {
+                  return next(err);
+                }
+
+                asks_list = JSON.parse(sres.text)['asks'];
+                asks_list.reverse()
+
+                function buy_some(amout,list) {
+                  acc_p = 0
+                  amout_left = amout
+                  for (i in list){
+                    cur_p = list[i][0]
+                    cur_n = list[i][1]
+                    if (cur_n > amout_left) {
+                      acc_p += cur_p*amout_left
+                      return acc_p/amout
+                    }
+                    acc_p += cur_n*cur_p
+                    amout_left -= cur_n
+                  }
+                  return 0
+                }
+
+                buy_10 = buy_some(10,asks_list)
+                buy_20 = buy_some(20,asks_list)
+                buy_50 = buy_some(50,asks_list)
+                buy_100 = buy_some(100,asks_list)
+
+
+
+
+
+
+                //get usd bids depth
+                superagent.get('https://www.okcoin.com/api/v1/depth.do?symbol=btc_usd&merge=1')
+                  .buffer(true)
+                  .end(function (err, sres) {
+                    if (err) {
+                      return next(err);
+                    }
+                  bids_list = JSON.parse(sres.text)['bids'];
+
+                  function sell_some(amout,list) {
+                    acc_p = 0
+                    amout_left = amout
+                    for (i in list){
+                      cur_p = list[i][0]
+                      cur_n = list[i][1]
+                      if (cur_n > amout_left) {
+                        acc_p += cur_p*amout_left
+                        return acc_p/amout
+                      }
+                      acc_p += cur_n*cur_p
+                      amout_left -= cur_n
+                    }
+                    return 0
+                  }
+
+                  sell_10 = sell_some(10,bids_list)*0.998
+                  sell_20 = sell_some(20,bids_list)*0.998
+                  sell_50 = sell_some(50,bids_list)*0.998
+                  sell_100 = sell_some(100,bids_list)*0.998
+
+                  erate_10 = (buy_10/sell_10).toFixed(4)
+                  erate_20 = (buy_20/sell_20).toFixed(4)
+                  erate_50 = (buy_50/sell_50).toFixed(4)
+                  erate_100 = (buy_100/sell_100).toFixed(4)
+
+                  result.erate_10 = erate_10
+                  result.erate_20 = erate_20
+                  result.erate_50 = erate_50
+                  result.erate_100 = erate_100
+
+
+                  res.render('index', { title: 'Bitcoin Costing', message: result });
+
+                });
+
+           
+
+            });
+
+
+
+          }
+
+          eval(sres.text)
+
+      });
+
     });
 });
 
