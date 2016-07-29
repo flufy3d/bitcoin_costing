@@ -302,6 +302,7 @@ app.get('/', function (req, res, next) {
                   json_data = JSON.parse(sres.text)
                   bids_list_usd = json_data['bids']
                   asks_list_usd = json_data['asks']
+                  asks_list_usd.reverse()
 
                   sell_10_usd = sell_some(10,bids_list_usd)*0.998
                   sell_20_usd = sell_some(20,bids_list_usd)*0.998
