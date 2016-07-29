@@ -119,6 +119,40 @@ app.get('/set', function (req, res, next) {
 var result = {};
 
 
+function buy_some(amout,list) {
+  acc_p = 0
+  amout_left = amout
+  for (i in list){
+    cur_p = list[i][0]
+    cur_n = list[i][1]
+    if (cur_n > amout_left) {
+      acc_p += cur_p*amout_left
+      return acc_p/amout
+    }
+    acc_p += cur_n*cur_p
+    amout_left -= cur_n
+  }
+  return 0
+}
+
+function sell_some(amout,list) {
+acc_p = 0
+amout_left = amout
+for (i in list){
+  cur_p = list[i][0]
+  cur_n = list[i][1]
+  if (cur_n > amout_left) {
+    acc_p += cur_p*amout_left
+    return acc_p/amout
+  }
+  acc_p += cur_n*cur_p
+  amout_left -= cur_n
+}
+return 0
+}
+
+
+
 app.get('/', function (req, res, next) {
 
   //compute mining cost
@@ -237,32 +271,23 @@ app.get('/', function (req, res, next) {
                   return next(err);
                 }
 
-                asks_list = JSON.parse(sres.text)['asks'];
-                asks_list.reverse()
+                json_data = JSON.parse(sres.text)
+                asks_list_cny = json_data['asks']
+                asks_list_cny.reverse()
+                bids_list_cny = json_data['bids']
 
-                function buy_some(amout,list) {
-                  acc_p = 0
-                  amout_left = amout
-                  for (i in list){
-                    cur_p = list[i][0]
-                    cur_n = list[i][1]
-                    if (cur_n > amout_left) {
-                      acc_p += cur_p*amout_left
-                      return acc_p/amout
-                    }
-                    acc_p += cur_n*cur_p
-                    amout_left -= cur_n
-                  }
-                  return 0
-                }
 
-                buy_10 = buy_some(10,asks_list)
-                buy_20 = buy_some(20,asks_list)
-                buy_50 = buy_some(50,asks_list)
-                buy_100 = buy_some(100,asks_list)
+                buy_10_cny = buy_some(10,asks_list_cny)
+                buy_20_cny = buy_some(20,asks_list_cny)
+                buy_50_cny = buy_some(50,asks_list_cny)
+                buy_100_cny = buy_some(100,asks_list_cny)
 
 
 
+                sell_10_cny = sell_some(10,bids_list_cny)
+                sell_20_cny = sell_some(20,bids_list_cny)
+                sell_50_cny = sell_some(50,bids_list_cny)
+                sell_100_cny = sell_some(100,bids_list_cny)
 
 
 
@@ -273,38 +298,46 @@ app.get('/', function (req, res, next) {
                     if (err) {
                       return next(err);
                     }
-                  bids_list = JSON.parse(sres.text)['bids'];
 
-                  function sell_some(amout,list) {
-                    acc_p = 0
-                    amout_left = amout
-                    for (i in list){
-                      cur_p = list[i][0]
-                      cur_n = list[i][1]
-                      if (cur_n > amout_left) {
-                        acc_p += cur_p*amout_left
-                        return acc_p/amout
-                      }
-                      acc_p += cur_n*cur_p
-                      amout_left -= cur_n
-                    }
-                    return 0
-                  }
+                  json_data = JSON.parse(sres.text)
+                  bids_list_usd = json_data['bids']
+                  asks_list_usd = json_data['asks']
 
-                  sell_10 = sell_some(10,bids_list)*0.998
-                  sell_20 = sell_some(20,bids_list)*0.998
-                  sell_50 = sell_some(50,bids_list)*0.998
-                  sell_100 = sell_some(100,bids_list)*0.998
+                  sell_10_usd = sell_some(10,bids_list_usd)*0.998
+                  sell_20_usd = sell_some(20,bids_list_usd)*0.998
+                  sell_50_usd = sell_some(50,bids_list_usd)*0.998
+                  sell_100_usd = sell_some(100,bids_list_usd)*0.998
 
-                  erate_10 = (buy_10/sell_10).toFixed(4)
-                  erate_20 = (buy_20/sell_20).toFixed(4)
-                  erate_50 = (buy_50/sell_50).toFixed(4)
-                  erate_100 = (buy_100/sell_100).toFixed(4)
 
-                  result.erate_10 = erate_10
-                  result.erate_20 = erate_20
-                  result.erate_50 = erate_50
-                  result.erate_100 = erate_100
+
+                  buy_10_usd = buy_some(10,asks_list_usd)*0.998
+                  buy_20_usd = buy_some(20,asks_list_usd)*0.998
+                  buy_50_usd = buy_some(50,asks_list_usd)*0.998
+                  buy_100_usd = buy_some(100,asks_list_usd)*0.998
+
+
+
+                  erate_10_out = (buy_10_cny/sell_10_usd).toFixed(4)
+                  erate_20_out = (buy_20_cny/sell_20_usd).toFixed(4)
+                  erate_50_out = (buy_50_cny/sell_50_usd).toFixed(4)
+                  erate_100_out = (buy_100_cny/sell_100_usd).toFixed(4)
+
+                  erate_10_in = (sell_10_cny/buy_10_usd).toFixed(4)
+                  erate_20_in = (sell_20_cny/buy_20_usd).toFixed(4)
+                  erate_50_in = (sell_50_cny/buy_50_usd).toFixed(4)
+                  erate_100_in = (sell_100_cny/buy_100_usd).toFixed(4)
+
+
+                  result.erate_10_out = erate_10_out
+                  result.erate_20_out = erate_20_out
+                  result.erate_50_out = erate_50_out
+                  result.erate_100_out = erate_100_out
+
+
+                  result.erate_10_in = erate_10_in
+                  result.erate_20_in = erate_20_in
+                  result.erate_50_in = erate_50_in
+                  result.erate_100_in = erate_100_in
 
 
                   res.render('index', { title: 'Bitcoin Costing', message: result });
