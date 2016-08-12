@@ -235,33 +235,7 @@ app.get('/', function (req, res, next) {
             return next(err);
           }
 
-          function ShowDatalist(data_list)
-          {
-            var acc_num_usd = 0
-            var acc_value_usd = 0
-            for (i in data_list)
-            {
-                data = data_list[i]
-                if (data.code == 'USD' ) {
-                  acc_num_usd += 1.0
-                  acc_value_usd += parseFloat(data.sellPrice2)
-                }
-            }
-            result.usd2cny = (acc_value_usd/acc_num_usd/100).toFixed(4)
-
-            var acc_num_eur = 0
-            var acc_value_eur = 0
-            for (i in data_list)
-            {
-                data = data_list[i]
-                if (data.code == 'EUR' ) {
-                  acc_num_eur += 1.0
-                  acc_value_eur += parseFloat(data.sellPrice2)
-                }
-            }
-            result.eur2cny = (acc_value_eur/acc_num_eur/100).toFixed(4)            
-
-
+          function ComputeTransRate() {
             //get cny asks depth
             
             superagent.get('https://www.okcoin.cn/api/v1/depth.do?symbol=btc_cny&merge=1')
@@ -348,13 +322,48 @@ app.get('/', function (req, res, next) {
            
 
             });
+          }
+          function ShowDatalist(data_list)
+          {
+            var acc_num_usd = 0
+            var acc_value_usd = 0
+            for (i in data_list)
+            {
+                data = data_list[i]
+                if (data.code == 'USD' ) {
+                  acc_num_usd += 1.0
+                  acc_value_usd += parseFloat(data.sellPrice2)
+                }
+            }
+            result.usd2cny = (acc_value_usd/acc_num_usd/100).toFixed(4)
 
+            var acc_num_eur = 0
+            var acc_value_eur = 0
+            for (i in data_list)
+            {
+                data = data_list[i]
+                if (data.code == 'EUR' ) {
+                  acc_num_eur += 1.0
+                  acc_value_eur += parseFloat(data.sellPrice2)
+                }
+            }
+            result.eur2cny = (acc_value_eur/acc_num_eur/100).toFixed(4)            
+
+
+            ComputeTransRate();
 
 
           }
 
-          eval(sres.text)
 
+          try {
+            eval(sres.text)
+
+          } catch(e) {
+            console.error('Error caught by catch block:', e);
+            ComputeTransRate();
+          }
+          
       });
 
     });
