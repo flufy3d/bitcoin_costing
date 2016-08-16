@@ -228,7 +228,7 @@ app.get('/', function (req, res, next) {
       };
 
       //compute transfer cost
-      superagent.get('http://data.bank.hexun.com/other/cms/foreignexchangejson.ashx?callback=ShowDatalist')
+      superagent.get('http://data.bank.hexun.com/other/cms/foreignexchangejson.ashx?callback=comex')
         .buffer(true)
         .end(function (err, sres) {
           if (err) {
@@ -323,7 +323,7 @@ app.get('/', function (req, res, next) {
 
             });
           }
-          function ShowDatalist(data_list)
+          function comex(data_list)
           {
             var acc_num_usd = 0
             var acc_value_usd = 0
