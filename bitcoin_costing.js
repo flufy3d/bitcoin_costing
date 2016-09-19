@@ -21,6 +21,15 @@ var global_param = {};
 global_param.p = 3;
 
 var local_device_lists = [];
+
+var l_device = {
+  name : '蚂蚁S9矿机',
+  rmb : 11300,
+  speed : 11850,
+  watt : 1172,
+};
+local_device_lists.push(l_device);
+
 var l_device = {
   name : '蚂蚁S7矿机',
   rmb : 2900,
@@ -58,14 +67,6 @@ var l_device = {
   rmb : 1750,
   speed : 1400,
   watt : 1200,
-};
-local_device_lists.push(l_device);
-
-var l_device = {
-  name : '蚂蚁S5矿机',
-  rmb : 2600,
-  speed : 1150,
-  watt : 590,
 };
 local_device_lists.push(l_device);
 
